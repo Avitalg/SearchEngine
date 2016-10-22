@@ -7,8 +7,8 @@
 <h3>All Articles</h3>
     {% for article in all_articles %}
     <div>
-        <h4><a href="{% url 'search:details' article.id %}">{{article.getTitle }}</a></h4>
-        <p>{{article.getSummary }}...</p>
+        <h4><a href="{% url 'search:details' article.id %}">{{article.get_title }}</a></h4>
+        <p>{{article.get_summary }}...</p>
     </div>
     {% endfor %}
 {% else %}

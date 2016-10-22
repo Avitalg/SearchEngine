@@ -3,32 +3,36 @@ from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.core.exceptions import ObjectDoesNotExist
 import re
+from django.core.urlresolvers import reverse
 
 
 class Article(models.Model):
     file = models.FileField(null=True, blank=True)
     hide = models.BooleanField(default=False)
 
-    def __str__(self):
-        return "title:" + str(self.getTitle()) + '\nsummary:' + str(self.getSummary())
+    def get_absolute_url(self):
+        return reverse('search:details', kwargs={'pk': self.pk})
 
-    def getId(self):
+    def __str__(self):
+        return "id:" + str(self.pk) + "\ttitle:" + str(self.get_title())
+
+    def get_id(self):
         return self.id
 
-    def getTitle(self):
+    def get_title(self):
         self.file.open()
         text = self.file.readline()
         self.file.close()
         return text
 
-    def getAuthor(self):
+    def get_author(self):
         self.file.open()
         self.file.readline()
         text = self.file.readline()
         self.file.close()
         return text
 
-    def getSummary(self):
+    def get_summary(self):
         self.file.open()
         self.file.readline()
         self.file.readline()
@@ -36,7 +40,7 @@ class Article(models.Model):
         self.file.close()
         return text
 
-    def getData(self):
+    def get_data(self):
         self.file.open()
         self.file.readline()
         self.file.readline()
@@ -54,6 +58,7 @@ class Word(models.Model):
 
     def __str__(self):
         return "word:" + str(self.data) + ", article:" + str(self.article.pk) + ", amount:" + str(self.amount)
+
 
 class Stoplist(models.Model):
     data = models.CharField(max_length=20)

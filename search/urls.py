@@ -12,6 +12,6 @@ urlpatterns = [
     url('articles/', views.ArticlesView.as_view(), name='articles'),
     url('results/', views.ResultsView.as_view(), name='results'),
     url('manage/', views.ManageView.as_view(), name='manage'),
-    url(r'^addFiles$', views.AddFileView.as_view(), name='addFiles'),
-    url(r'^submit', views.addFilesSubmit, name='addFilesSubmit'),
+    url(r'^article/add/$', views.AddFileView.as_view(), name='add-files'),
+    url(r'^submit', views.AddFileView.as_view(), name='addFilesSubmit'),
 ]
