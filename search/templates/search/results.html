@@ -1,0 +1,30 @@
+{%extends 'search/base.html' %}
+{%block title%}Results{%endblock%}
+{% load staticfiles %}
+
+{%block scripts%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.4.0/jquery.mark.min.js"></script>
+<script>
+        var words = {{keywords|safe}};
+</script>
+{%endblock%}
+
+{% block body %}
+<button id="go-back">Back</button>
+<h1>Results</h1>
+{%if not results%}
+<p>No Results</p>
+{%else%}
+<article id="inputText">
+    {%for result in results%}
+    <h4><a href="{% url 'search:details' result.getId %}">{{result.getTitle}}</a></h4>
+    <p>{{result.getSummary}}...</p>
+    {%endfor%}
+</article>
+
+
+{%endif%}
+
+
+{% endblock %}
+

@@ -1,0 +1,22 @@
+{%extends 'search/base.html' %}
+
+{%block title%}Home{%endblock%}
+{% block body %}
+
+<h1>HOME</h1>
+
+{% if error_message %}
+    <p><pre>{{error_message}}</pre></p>
+{% endif %}
+
+<form action="{%url 'search:results' %}" method="post">
+    {% csrf_token%}
+    <label for="find">search</label><input type="text" id="find" name="find" placeholder="search"><br>
+    <label for="smeth">search method</label>
+    <input type="radio" class="smeth" name="smeth" value="or" checked><label>or</label>
+    <input type="radio" class="smeth" name="smeth" value="and"><label>and</label>
+    <input type="radio" class="smeth" name="smeth" value="not"><label>not</label>
+    <br>
+    <input value="submit" name="submit" type="submit">
+</form>
+{% endblock %}

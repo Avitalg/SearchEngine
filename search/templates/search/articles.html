@@ -1,0 +1,18 @@
+{%extends 'search/base.html' %}
+{%block title%}Articles{%endblock%}
+
+{% block body %}
+<button id="go-back">Back</button>
+{% if all_articles %}
+<h3>All Articles</h3>
+    {% for article in all_articles %}
+    <div>
+        <h4><a href="{% url 'search:details' article.id %}">{{article.getTitle }}</a></h4>
+        <p>{{article.getSummary }}...</p>
+    </div>
+    {% endfor %}
+{% else %}
+    <h3>No Articles</h3>
+{% endif %}
+
+{% endblock %}
