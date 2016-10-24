@@ -18,6 +18,7 @@ mark{
 .possibilities{
     width: 15%;
     float:right;
+    transform: translate(0%, 50%);
 }
 
 .change_article{
@@ -34,6 +35,19 @@ mark{
     margin: 5px;
 }
 
+.stoplist{
+    clear: both;
+    height: 50px;
+}
+
+.stoplist h4{
+    float: left;
+}
+
+.stopform{
+    float: right;
+}
+
 button#back, button#go-back {
     float: right;
     margin-right: 10px;
@@ -43,4 +57,28 @@ button#back, button#go-back {
     width: 80%;
     margin: 10px;
     border-bottom: darkblue dashed 1px;
+}
+
+#background{
+    background: url("bg1.jpg");
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: -10;
+    opacity: 0.3;
+}
+
+h1, h2, h3{
+    border-bottom: 2px solid gainsboro;
+    display: inline-block;
+}
+
+a{
+    color: #5d5e60;
+}
+
+a:hover{
+    color: black;
 }

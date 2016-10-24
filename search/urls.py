@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)$', views.DetailView.as_view(), name='details'),
     url('articles/', views.ArticlesView.as_view(), name='articles'),
     url('results/', views.ResultsView.as_view(), name='results'),
+    url('advance/', views.AdvanceSearch.as_view(), name='advance'),
     url('manage/articles/', views.ArticlesManageView.as_view(), name='articles-manage'),
     url('manage/find/', views.FindFilesView.as_view(), name='find-files'),
     url('manage/update/', views.UpdateFilesView.as_view(), name='update-files'),

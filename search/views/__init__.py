@@ -6,3 +6,4 @@ from .ManageView import *
 from .FindFilesView import *
 from .UpdateFilesView import *
 from .StoplistView import *
+from .AdvanceSearch import *

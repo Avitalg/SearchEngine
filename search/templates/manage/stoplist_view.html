@@ -8,10 +8,12 @@
     {% for word in all_words %}
     <div class="stoplist result">
         <h4><span>{{word.id}}</span>{{word.data }}</h4>
-        <form action="" method="post">
-            {% csrf_token %}
-            <button name="id" class="btn btn-default" value="{{word.id}}" type="submit">remove</button>
-        </form>
+        <div class="stopform">
+            <form action="" method="post">
+                {% csrf_token %}
+                <button name="id" class="btn btn-default" value="{{word.id}}" type="submit">remove</button>
+            </form>
+        </div>
     </div>
     {% endfor %}
 {% else %}
