@@ -12,7 +12,6 @@ urlpatterns = [
     url('articles/', views.ArticlesView.as_view(), name='articles'),
     url('results/', views.ResultsView.as_view(), name='results'),
     url('manage/', views.ManageView.as_view(), name='manage'),
-    url(r'^article/add/$', views.AddFileView.as_view(), name='add-files'),
     url(r'^article/find/$', views.FindFilesView.as_view(), name='find-files'),
-    url(r'^submit', views.AddFileView.as_view(), name='addFilesSubmit'),
+    # url(r'^submit', views.AddFileView.as_view(), name='addFilesSubmit'),
 ]

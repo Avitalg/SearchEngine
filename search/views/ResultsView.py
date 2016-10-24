@@ -35,5 +35,5 @@ class ResultsView(generic.ListView):
             words = Word.objects.filter(data__in=jsonword).order_by('-amount').values("article").distinct()
             articles = Article.objects.exclude(id__in=words).exclude(hide=True)
 
-        return render(request, 'search/results.html', {'results': articles, 'keywords': jsonword})
+        return render(request, self.template_name, {'results': articles, 'keywords': jsonword})
 

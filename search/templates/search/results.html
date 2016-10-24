@@ -16,9 +16,12 @@
 <p>No Results</p>
 {%else%}
 <article id="inputText">
-    {%for result in results%}
-    <h4><a href="{{result.get_url }}">{{result.get_title}}</a></h4>
-    <p>{{result.get_summary}}...</p>
+    {%for article in results%}
+    <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
+        <p>
+            <div class="link">{{article.get_url}}</div>
+            <div class="summary">{{article.get_summary }}...</div>
+        </p>
     {%endfor%}
 </article>
 

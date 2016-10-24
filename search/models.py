@@ -10,7 +10,7 @@ from django.core.files.storage import default_storage
 class Article(models.Model):
     title = models.CharField(max_length=100, default="", blank=False)
     summary = models.CharField(max_length=300, default="", blank=True)
-    url = models.URLField(max_length=1000, default="", blank=False, unique=True)
+    url = models.URLField(max_length=1000, default="", blank=False)
     hide = models.BooleanField(default=False)
 
     def __str__(self):
