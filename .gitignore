@@ -3,3 +3,5 @@ __pycache__/
 engine/settings.py
 settings.py
 */*/settings.py
+search/migrations
+db.sqlite3
