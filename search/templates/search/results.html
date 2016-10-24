@@ -16,12 +16,17 @@
 <p>No Results</p>
 {%else%}
 <article id="inputText">
-    {%for article in results%}
-    <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
+    <!--<div>-->
+        <!--{{results}}-->
+    <!--</div>-->
+    {%for result in results%}
+        {%for article in result.words.all%}
+    <h4><a href="{{article.get_url}}">{{article.article.get_title }}</a></h4>
         <p>
-            <div class="link">{{article.get_url}}</div>
-            <div class="summary">{{article.get_summary }}...</div>
+            <div class="link">{{article.article.get_url}}</div>
+            <div class="summary">{{article.article.get_summary }}...</div>
         </p>
+        {%endfor%}
     {%endfor%}
 </article>
 

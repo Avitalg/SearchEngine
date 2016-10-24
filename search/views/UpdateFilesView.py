@@ -48,8 +48,3 @@ class UpdateFilesView(generic.ListView):
 
     def delete_exist_words(article):
         Word.objects.filter(article=article).delete()
-
-
-
-        # def get_queryset(self):
-    #     return Article.objects.all().exclude(hide=True)

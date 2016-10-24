@@ -31,6 +31,9 @@ class Word(models.Model):
     data = models.CharField(max_length=20)
     amount = models.IntegerField(default=1)
 
+    class Meta:
+        ordering = ['-amount', 'article']
+
     def __str__(self):
         return "word:" + str(self.data) + ", article:" + str(self.article.pk) + ", amount:" + str(self.amount)
 
@@ -40,6 +43,15 @@ class Stoplist(models.Model):
 
     def __str__(self):
         return str(self.data)
+
+
+class Postingfile(models.Model):
+    data = models.CharField(max_length=20)
+    words = models.ManyToManyField(Word)
+
+    def __str__(self):
+        return "data:" + str(self.data) +", words:" + str(self.words.all())
+
 
 
 #=================

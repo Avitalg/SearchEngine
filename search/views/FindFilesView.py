@@ -3,7 +3,7 @@ import re
 from django.core.exceptions import ObjectDoesNotExist
 import requests
 from bs4 import BeautifulSoup
-from search.models import Article, Word
+from search.models import Article, Word, Postingfile as Pfile
 from django.views import generic
 
 
@@ -17,7 +17,7 @@ class FindFilesView(generic.ListView):
         url_domain = 'http://shakespeare.mit.edu/Poetry'
         url = url_domain + '/sonnets.html'
 
-        articles = self.crawling_url(url, 8)
+        articles = self.crawling_url(url, 4)
         if not articles:
             context['error_msg'] = "No new articles was found"
         context['all_articles'] = articles
@@ -81,15 +81,26 @@ class FindFilesView(generic.ListView):
 
         for word in word_list:
             try:
-                exist_word = Word.objects.get(data=word, article=article)
-                exist_word.amount += 1
-                exist_word.save()
+                new_word = Word.objects.get(data=word, article=article)
+                new_word.amount += 1
+                new_word.save()
             except (ObjectDoesNotExist, Word.DoesNotExist):
                 new_word = Word()
                 new_word.article = article
                 new_word.data = word
                 new_word.amount = 1
                 new_word.save()
+            finally:
+                try:
+                    pfile_word = Pfile.objects.get(data=word)
+                    pfile_word.words.add(new_word)
+                    pfile_word.save()
+                except (ObjectDoesNotExist, Word.DoesNotExist):
+                    pfile_word = Pfile(data=word)
+                    pfile_word.save()
+                    pfile_word.words.add(new_word)
+
+
 
     def check_if_url_exists(self, url):
         return Article.objects.filter(url=url).exists()
