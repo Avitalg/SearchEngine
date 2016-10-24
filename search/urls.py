@@ -13,5 +13,6 @@ urlpatterns = [
     url('results/', views.ResultsView.as_view(), name='results'),
     url('manage/', views.ManageView.as_view(), name='manage'),
     url(r'^article/find/$', views.FindFilesView.as_view(), name='find-files'),
+    url(r'^article/update/$', views.UpdateFilesView.as_view(), name='update-files'),
     # url(r'^submit', views.AddFileView.as_view(), name='addFilesSubmit'),
 ]

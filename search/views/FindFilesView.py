@@ -71,10 +71,10 @@ class FindFilesView(generic.ListView):
                     article.save()
                     articles.append(article)
                     article = Article.objects.get(pk=article.pk)
-                    self.save_words(article, text)
+                    FindFilesView.save_words(article, text)
         return articles
 
-    def save_words(self, article, text):
+    def save_words(article, text):
         word_list = re.findall(r"[\w']+", text)
         word_list = [word.lower() for word in word_list]
         word_list.sort()
@@ -93,3 +93,4 @@ class FindFilesView(generic.ListView):
 
     def check_if_url_exists(self, url):
         return Article.objects.filter(url=url).exists()
+
