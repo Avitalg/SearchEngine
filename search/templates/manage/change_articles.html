@@ -2,7 +2,7 @@
 {%block title%}Articles{%endblock%}
 
 {% block body %}
-<button id="back" onclick="javascript:location.href='{%url 'search:manage'%}'">Back</button>
+<button id="back" onclick="javascript:location.href='{%url 'search:manage'%}'" class="btn btn-warning">Back</button>
 {%if exception %}
     <div>{{exception }}</div>
 {% elif all_articles %}
@@ -20,10 +20,10 @@
                 <input type="hidden" name="article_id" value="{{article.pk}}">
                 {%if article.get_if_hide %}
                 <input type="hidden" name="vis" value="False">
-                <button type="submit" name="submit" value="False">Show</button>
+                <button type="submit" name="submit" value="False" class="btn btn-default">Show</button>
                 {%else%}
                 <input type="hidden" name="vis" value="True">
-                <button type="submit" name="submit" value="True">Hide</button>
+                <button type="submit" name="submit" value="True" class="btn btn-default">Hide</button>
                 {%endif%}
             </form>
         </div>

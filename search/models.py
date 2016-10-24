@@ -55,6 +55,9 @@ class Postingfile(models.Model):
     def __str__(self):
         return "data:" + str(self.data) +", words:" + str(self.words.all())
 
+    def get_absolute_url(self):
+        return reverse('stoplist-view')
+
 
 
 #=================

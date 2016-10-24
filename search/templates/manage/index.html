@@ -2,7 +2,7 @@
 {%block title%}Articles{%endblock%}
 
 {% block body %}
-<button id="go-back">Back</button>
+<button id="go-back" class="btn btn-warning">Back</button>
 
 <h3>Manage Center</h3>
 
@@ -12,6 +12,8 @@
     <li><a href="{%url 'search:update-files'%}">Update Articles</a></li>
     <li><a href="{%url 'search:change-files'%}">Change Articles</a></li>
     <li><a href="{%url 'search:delete-files'%}">Delete Articles</a></li>
+    <li><a href="{%url 'search:stoplist-view'%}">Watch/remove Stoplist words</a></li>
+    <li><a href="{%url 'search:stoplist-words'%}">Add Words To Stoplist</a></li>
 </ul>
 
 

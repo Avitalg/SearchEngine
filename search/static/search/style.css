@@ -28,3 +28,19 @@ mark{
 .result.change{
     clear: both
 }
+
+.stoplist h4 span{
+    color: green;
+    margin: 5px;
+}
+
+button#back, button#go-back {
+    float: right;
+    margin-right: 10px;
+}
+
+.result {
+    width: 80%;
+    margin: 10px;
+    border-bottom: darkblue dashed 1px;
+}

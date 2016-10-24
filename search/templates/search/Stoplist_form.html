@@ -1,10 +1,10 @@
 {%extends 'search/base.html' %}
-{%block title%}Add New Files{%endblock%}
+{%block title%}Stoplist Manager{%endblock%}
+{% load staticfiles %}
 
 {% block body %}
-<button id="go-back">Back</button>
-
-<h3>Add Files</h3>
+<button id="go-back" class="btn btn-warning">Back</button>
+<h1>Add Word To Stoplist</h1>
 
 <form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -15,4 +15,6 @@
         </div>
     </div>
 </form>
+
 {% endblock %}
+
