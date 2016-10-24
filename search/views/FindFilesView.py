@@ -13,11 +13,10 @@ class FindFilesView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(FindFilesView, self).get_context_data(**kwargs)
-
-        url_domain = 'http://shakespeare.mit.edu/Poetry'
-        url = url_domain + '/sonnets.html'
+        url = 'http://shakespeare.mit.edu/richardii/index.html'
 
         articles = self.crawling_url(url, 4)
+
         if not articles:
             context['error_msg'] = "No new articles was found"
         context['all_articles'] = articles

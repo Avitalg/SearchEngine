@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>{%block title%}Search Engine{%endblock%}</title>
      {% load staticfiles %}
-        <link rel="stylesheet" href="{%static 'search/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%static 'search/css/bootstrap.min.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
     <script src="{%static 'search/js/jquery.min.js' %}"></script>
     <script src="{%static 'search/js/bootstrap.min.js' %}" ></script>
     <link rel="stylesheet" href="{% static 'search/style.css' %}">
@@ -24,7 +25,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{% url 'search:index'%}">Search Article</a>
+      <a class="navbar-brand" href="{% url 'search:index'%}">Search Articles</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->

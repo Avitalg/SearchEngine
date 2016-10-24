@@ -1,5 +1,12 @@
 from django.conf.urls import url
 from . import views
+from django.conf.urls import (
+handler400, handler403, handler404, handler500
+)
+
+
+handler404 = 'search.views.handler404'
+handler500 = 'search.views.handler500'
 
 
 app_name = 'search'
