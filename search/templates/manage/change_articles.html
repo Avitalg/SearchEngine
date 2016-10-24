@@ -1,0 +1,36 @@
+{%extends 'search/base.html' %}
+{%block title%}Articles{%endblock%}
+
+{% block body %}
+<button id="back" onclick="javascript:location.href='{%url 'search:manage'%}'">Back</button>
+{%if exception %}
+    <div>{{exception }}</div>
+{% elif all_articles %}
+<h3>All Articles</h3>
+    {% for article in all_articles %}
+    <div class="result change">
+        <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
+        <div class="change_article">
+            <div class="link">{{article.get_url}}</div>
+            <div class="summary">{{article.get_summary }}...</div>
+        </div>
+        <div class="possibilities">
+            <form action="{%url 'search:change-files'%}" method="post">
+                {% csrf_token%}
+                <input type="hidden" name="article_id" value="{{article.pk}}">
+                {%if article.get_if_hide %}
+                <input type="hidden" name="vis" value="False">
+                <button type="submit" name="submit" value="False">Show</button>
+                {%else%}
+                <input type="hidden" name="vis" value="True">
+                <button type="submit" name="submit" value="True">Hide</button>
+                {%endif%}
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <h3>{{error_msg}}</h3>
+{% endif %}
+
+{% endblock %}

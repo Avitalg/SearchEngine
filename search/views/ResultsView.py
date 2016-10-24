@@ -20,8 +20,8 @@ class ResultsView(generic.ListView):
         if smeth == 'or':
             words = Postingfile.objects.filter(data__in=wordlist).exclude(data__in=exclude_words)
 
-            for word in words:
-                words[word] = set(word)
+            # for word in words:
+            #     words[word] = set(word)
 
 
         if smeth == "and":

@@ -1,4 +1,4 @@
-from ..models import Article, Word
+from ..models import Article, Word, Postingfile
 from django.views import generic
 import requests
 from bs4 import BeautifulSoup
@@ -48,3 +48,5 @@ class UpdateFilesView(generic.ListView):
 
     def delete_exist_words(article):
         Word.objects.filter(article=article).delete()
+        Postingfile.objects.filter(words__isnull=True).delete()
+

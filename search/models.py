@@ -25,6 +25,9 @@ class Article(models.Model):
     def get_url(self):
         return str(self.url)
 
+    def get_if_hide(self):
+        return self.hide
+
 
 class Word(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)

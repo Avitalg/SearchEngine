@@ -14,3 +14,17 @@ mark{
 .link{
     color: green;
 }
+
+.possibilities{
+    width: 15%;
+    float:right;
+}
+
+.change_article{
+    width: 80%;
+    float:left;
+}
+
+.result.change{
+    clear: both
+}
