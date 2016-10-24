@@ -6,9 +6,12 @@
 {% if all_articles %}
 <h3>All Articles</h3>
     {% for article in all_articles %}
-    <div>
-        <h4><a href="{% url 'search:details' article.id %}">{{article.get_title }}</a></h4>
-        <p>{{article.get_summary }}...</p>
+    <div class="result">
+        <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
+        <p>
+            <div class="link">{{article.get_url}}</div>
+            <div class="summary">{{article.get_summary }}...</div>
+        </p>
     </div>
     {% endfor %}
 {% else %}

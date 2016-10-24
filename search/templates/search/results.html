@@ -17,8 +17,8 @@
 {%else%}
 <article id="inputText">
     {%for result in results%}
-    <h4><a href="{% url 'search:details' result.getId %}">{{result.getTitle}}</a></h4>
-    <p>{{result.getSummary}}...</p>
+    <h4><a href="{{result.get_url }}">{{result.get_title}}</a></h4>
+    <p>{{result.get_summary}}...</p>
     {%endfor%}
 </article>
 

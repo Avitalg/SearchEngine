@@ -4,51 +4,26 @@ from django.dispatch.dispatcher import receiver
 from django.core.exceptions import ObjectDoesNotExist
 import re
 from django.core.urlresolvers import reverse
+from django.core.files.storage import default_storage
 
 
 class Article(models.Model):
-    file = models.FileField(null=True, blank=True)
+    title = models.CharField(max_length=100, default="", blank=False)
+    summary = models.CharField(max_length=300, default="", blank=True)
+    url = models.URLField(max_length=1000, default="", blank=False, unique=True)
     hide = models.BooleanField(default=False)
 
-    def get_absolute_url(self):
-        return reverse('search:details', kwargs={'pk': self.pk})
-
     def __str__(self):
-        return "id:" + str(self.pk) + "\ttitle:" + str(self.get_title())
-
-    def get_id(self):
-        return self.id
+        return "id:" + str(self.pk) + ", title:" + str(self.title)
 
     def get_title(self):
-        self.file.open()
-        text = self.file.readline()
-        self.file.close()
-        return text
-
-    def get_author(self):
-        self.file.open()
-        self.file.readline()
-        text = self.file.readline()
-        self.file.close()
-        return text
+        return str(self.title)
 
     def get_summary(self):
-        self.file.open()
-        self.file.readline()
-        self.file.readline()
-        text = self.file.read(300)
-        self.file.close()
-        return text
+        return str(self.summary)
 
-    def get_data(self):
-        self.file.open()
-        self.file.readline()
-        self.file.readline()
-        text = self.file.read()
-        self.file.close()
-        return text
-
-    # def save(self):
+    def get_url(self):
+        return str(self.url)
 
 
 class Word(models.Model):
@@ -69,33 +44,32 @@ class Stoplist(models.Model):
 
 #=================
 
-@receiver(pre_delete, sender=Article)
-def article_delete(sender, instance, **kwargs):
-    # Pass false so FileField doesn't save the model.
-    instance.file.delete(False)
+# @receiver(pre_delete, sender=Article)
+# def article_delete(sender, instance, **kwargs):
+#     # Pass false so FileField doesn't save the model.
+    # instance.file.delete(False)
 
 
-@receiver(post_save, sender=Article)
-def article_save(sender, instance, **kwargs):
-    if kwargs['created']:
-        data = instance.file.read()
-        wordList = re.findall(b"[\w']+", data)
-        wordList = [word.lower() for word in wordList]
-        wordList.sort()
+# @receiver(post_save, sender=Article)
+# def article_save(sender, instance, **kwargs):
+    # if kwargs['created']:
+    #     wordList = re.findall(b"[\w']+", instance.data)
+    #     wordList = [word.lower() for word in wordList]
+    #     wordList.sort()
+    #
+    #     for word in wordList:
+    #         try:
+    #             exist_word = Word.objects.get(data=word, article=instance)
+    #             exist_word.amount += 1
+    #             exist_word.save()
+    #         except (ObjectDoesNotExist, Word.DoesNotExist):
+    #             new_word = Word()
+    #             new_word.article = instance
+    #             new_word.data = word
+    #             new_word.amount = 1
+    #             new_word.save()
 
-        for word in wordList:
-            try:
-                exist_word = Word.objects.get(data=word, article=instance)
-                exist_word.amount += 1
-                exist_word.save()
-            except (ObjectDoesNotExist, Word.DoesNotExist):
-                new_word = Word()
-                new_word.article = instance
-                new_word.data = word
-                new_word.amount = 1
-                new_word.save()
-
-    else:
-        Word.objects.filter(article=instance).delete()
+    # else:
+    #     Word.objects.filter(article=instance).delete()
 
 

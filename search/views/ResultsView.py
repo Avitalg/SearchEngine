@@ -16,11 +16,10 @@ class ResultsView(generic.ListView):
         wordlist = re.findall(r"[\w']+", data)
         jsonword = list(set(wordlist)-set(exclude_words))
         articles = articles_id = []
-        data = dict()
 
         if smeth == 'or':
             words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').values("article").distinct()
-            articles = Article.objects.filter(id__in=words)
+            articles = Article.objects.filter(id__in=words).exclude(hide=True)
 
         if smeth == "and":
             words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').values_list('article', flat=True)
@@ -30,17 +29,11 @@ class ResultsView(generic.ListView):
                     articles_id.append(word)
 
             articles_id = set(articles_id)
-            articles = Article.objects.filter(id__in=articles_id)
+            articles = Article.objects.filter(id__in=articles_id).exclude(hide=True)
 
         if smeth == "not":
             words = Word.objects.filter(data__in=jsonword).order_by('-amount').values("article").distinct()
-            articles = Article.objects.exclude(id__in=words)
-
-        for article in articles:
-            title = article.file.readline()
-            author = article.file.readline()
-            text = article.file.read(300)
-            data[title] = {"id": article.id, "data": text, "author": author}
+            articles = Article.objects.exclude(id__in=words).exclude(hide=True)
 
         return render(request, 'search/results.html', {'results': articles, 'keywords': jsonword})
 
