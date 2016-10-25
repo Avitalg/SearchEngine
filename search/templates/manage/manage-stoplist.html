@@ -1,0 +1,15 @@
+{%extends 'search/base.html' %}
+{%block title%}Manage Articles{%endblock%}
+
+{% block body %}
+<button id="go-back" class="btn btn-warning" href="{% url 'search:manage'%}">Manage Center</button>
+
+<h3>Manage Stoplist</h3>
+
+<ul>
+    <li><a href="{%url 'search:stoplist-view'%}">Watch/remove Stoplist words</a></li>
+    <li><a href="{%url 'search:stoplist-words'%}">Add Words To Stoplist</a></li>
+</ul>
+
+
+{% endblock %}

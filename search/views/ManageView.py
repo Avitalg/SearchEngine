@@ -4,9 +4,21 @@ from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 import traceback
 
+
 class ManageView(generic.TemplateView):
     template_name = 'manage/index.html'
 
+
+class ManageFilesView(generic.TemplateView):
+    template_name = 'manage/manage-articles.html'
+
+
+class ManageStoplistView(generic.TemplateView):
+    template_name = 'manage/manage-stoplist.html'
+
+
+class SettingsView(generic.TemplateView):
+    template_name = 'manage/manage-settings.html'
 
 class ChangeFilesView(generic.ListView):
     model = Article

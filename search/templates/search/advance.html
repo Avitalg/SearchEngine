@@ -3,21 +3,38 @@
 {%block title%}Advance Search{%endblock%}
 {% block body %}
 
-<h1>HOME</h1>
+<h1>Advance Search</h1>
 
 {% if error_message %}
     <p><pre>{{error_message}}</pre></p>
 {% endif %}
-
-<form action="{%url 'search:results' %}" method="post">
-    {% csrf_token%}
-    <label for="find">search</label><input type="text" id="find" name="find" placeholder="search"><br>
-    <label for="smeth">search method</label>
-    <input type="radio" class="smeth" name="smeth" value="or" checked><label>or</label>
-    <input type="radio" class="smeth" name="smeth" value="and"><label>and</label>
-    <input type="radio" class="smeth" name="smeth" value="not"><label>not</label>
-    <br>
-    <input value="submit" name="submit" type="submit">
-</form>
-<a href="%url 'search:advance-search' %">Advance Search</a>
+<div class="form">
+    <form action="{%url 'search:advance-results' %}" method="post" class="form-group">
+        {% csrf_token%}
+        <div class="form-group form-group-sm">
+            <div class="col-sm-2">
+                <label for="find" class="control-label">search</label>
+            </div>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="find" name="find" placeholder="search"><br>
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <div class="col-sm-2">
+                <label for="smeth" class="control-label">add method</label>
+            </div>
+            <div class="col-sm-10">
+                <button type="button" class="advance_meth btn" name="smeth" value="^">not</button>
+                <button type="button" class="advance_meth btn" name="smeth" value="||">or</button>
+                <button type="button" class="advance_meth btn" name="smeth" value="&&">and</button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <input value="submit" name="submit" type="submit" class="btn">
+        </div>
+    </form>
+</div>
+<div class="advance col-sm-12">
+    <a href="{% url 'search:index'%}">Regular Search</a>
+</div>
 {% endblock %}

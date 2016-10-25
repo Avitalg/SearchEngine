@@ -1,0 +1,18 @@
+{%extends 'search/base.html' %}
+{%block title%}Manage Articles{%endblock%}
+
+{% block body %}
+<button id="go-back" class="btn btn-warning" href="{% url 'search:manage'%}">Manage Center</button>
+
+<h3>Manage Articles</h3>
+
+<ul>
+    <li><a href="{%url 'search:articles-manage'%}">All Articles</a></li>
+    <li><a href="{%url 'search:find-files'%}">Find Articles</a></li>
+    <li><a href="{%url 'search:update-files'%}">Update Articles</a></li>
+    <li><a href="{%url 'search:change-files'%}">Change Articles</a></li>
+    <li><a href="{%url 'search:delete-files'%}">Delete Articles</a></li>
+</ul>
+
+
+{% endblock %}

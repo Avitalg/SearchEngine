@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
     <script src="{%static 'search/js/jquery.min.js' %}"></script>
     <script src="{%static 'search/js/bootstrap.min.js' %}" ></script>
-    <link rel="stylesheet" href="{% static 'search/style.css' %}">
-    <script src="{%static 'search/script.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'search/css/style.css' %}">
+    <script src="{%static 'search/js/script.js' %}"></script>
     {% block scripts%}
     {%endblock%}
 </head>
@@ -33,6 +33,7 @@
       <ul class="nav navbar-nav">
         <li><a href="{% url 'search:index'%}">Home <span class="sr-only">(current)</span></a></li>
         <li><a href="{%url 'search:articles'%}">Articles</a></li>
+        <li><a href="{%url 'search:advance-search'%}">Advance</a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">

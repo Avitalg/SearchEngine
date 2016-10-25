@@ -50,9 +50,13 @@ mark{
 
 button#back, button#go-back {
     float: right;
-    margin-right: 10px;
+    margin-right: 78px;
+    margin-top: 11px;
 }
 
+.form{
+    width:70%;
+}
 .result {
     width: 80%;
     margin: 10px;
@@ -60,7 +64,7 @@ button#back, button#go-back {
 }
 
 #background{
-    background: url("bg1.jpg");
+    background: url("../images/bg1.jpg");
     position: absolute;
     top: 0;
     right: 0;
@@ -83,7 +87,6 @@ a:hover{
     color: black;
 }
 
-
 .navbar-brand{
     font-family: 'Dancing Script', cursive;
     font-size: 22px;
@@ -93,4 +96,8 @@ a:hover{
 
 .result h4 {
     padding-top: 13px;
+}
+
+.advance{
+    margin-top: 50px;
 }

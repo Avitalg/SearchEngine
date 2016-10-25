@@ -14,20 +14,24 @@
 <h1>Results</h1>
 {%if not results%}
 <p>No Results</p>
+{%elif error%}
+    <p>{{error}}</p>
 {%else%}
+
+<pre>
+    {{results}}
+</pre>
 <article id="inputText">
-    <!--<div>-->
-        <!--{{results}}-->
-    <!--</div>-->
-    {%for result in results%}
-        {%for article in result.words.all%}
-    <h4><a href="{{article.get_url}}">{{article.article.get_title }}</a></h4>
+    {%for article in results%}
+    <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
         <p>
-            <div class="link">{{article.article.get_url}}</div>
-            <div class="summary">{{article.article.get_summary }}...</div>
+            <div class="link">{{article.get_url}}</div>
+            <div class="summary">{{article.get_summary }}...</div>
         </p>
-        {%endfor%}
-    {%endfor%}
+        <p class="print">
+            <button class="send-print" onclick="printFile('{{article.url}}')">Print</button>
+        </p>
+      {%endfor%}
 </article>
 
 

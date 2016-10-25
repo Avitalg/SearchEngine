@@ -1,5 +1,5 @@
 {%extends 'search/base.html' %}
-{%block title%}Articles{%endblock%}
+{%block title%}Manage Center{%endblock%}
 
 {% block body %}
 <button id="go-back" class="btn btn-warning">Back</button>
@@ -7,13 +7,9 @@
 <h3>Manage Center</h3>
 
 <ul>
-    <li><a href="{%url 'search:articles-manage'%}">All Articles</a></li>
-    <li><a href="{%url 'search:find-files'%}">Find Articles</a></li>
-    <li><a href="{%url 'search:update-files'%}">Update Articles</a></li>
-    <li><a href="{%url 'search:change-files'%}">Change Articles</a></li>
-    <li><a href="{%url 'search:delete-files'%}">Delete Articles</a></li>
-    <li><a href="{%url 'search:stoplist-view'%}">Watch/remove Stoplist words</a></li>
-    <li><a href="{%url 'search:stoplist-words'%}">Add Words To Stoplist</a></li>
+    <li><a href="{%url 'search:manage-files'%}">Manage Articles</a></li>
+    <li><a href="{%url 'search:manage-stoplist'%}">Manage Stoplist</a></li>
+    <li><a href="{%url 'search:manage-settings'%}">Settings</a></li>
 </ul>
 
 

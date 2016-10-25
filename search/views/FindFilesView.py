@@ -2,6 +2,7 @@ from urllib.parse import urlparse
 import re
 from django.core.exceptions import ObjectDoesNotExist
 import requests
+from django.shortcuts import render
 from bs4 import BeautifulSoup
 from search.models import Article, Word, Postingfile as Pfile
 from django.views import generic
@@ -10,12 +11,12 @@ from django.views import generic
 class FindFilesView(generic.ListView):
     model = Article
     context_object_name = 'all_articles'
+    url = 'http://shakespeare.mit.edu/Poetry/sonnets.html'
+    amount = 4
 
     def get_context_data(self, **kwargs):
         context = super(FindFilesView, self).get_context_data(**kwargs)
-        url = 'http://shakespeare.mit.edu/richardii/index.html'
-
-        articles = self.crawling_url(url, 4)
+        articles = self.crawling_url(self.url, self.amount)
 
         if not articles:
             context['error_msg'] = "No new articles was found"
@@ -23,13 +24,18 @@ class FindFilesView(generic.ListView):
         return context
 
     def post(self, request):
-        url = request.POST.get('url', "")
-        self.crawling_url(url, 4)
+        url = request.POST.get('url', self.url)
+        narticles = request.POST.get("narticles", "4")
+        narticles = int(narticles)
+        self.url = url
+        self.amount = narticles
+        articles = self.crawling_url(url, narticles)
+        return render(request, "search/results.html", {'results': articles})
+
 
     def crawling_url(self, url, article_number):
         split_url = url.rsplit('/', 1)
         url_domain = split_url[0]
-
         r = requests.get(url)
         html_content = r.text
         soup = BeautifulSoup(html_content)
@@ -60,8 +66,20 @@ class FindFilesView(generic.ListView):
                 if r.status_code == 200:
                     html_content = r.text
                     soup = BeautifulSoup(html_content)
+                    #clear script and style elements
+                    for script in soup(["script", "style"]):
+                        script.extract()
+
                     title = soup.title.string
                     text = soup.body.get_text()
+
+                    # break into lines and remove leading and trailing space on each
+                    lines = (line.strip() for line in text.splitlines())
+                    # break multi-headlines into a line each
+                    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+                    # drop blank lines
+                    text = '\n'.join(chunk for chunk in chunks if chunk)
+
                     regex = re.compile(r'[\n\r\t]')
                     text = text.rstrip()
                     text = regex.sub(' ', text)
@@ -71,6 +89,7 @@ class FindFilesView(generic.ListView):
                     articles.append(article)
                     article = Article.objects.get(pk=article.pk)
                     FindFilesView.save_words(article, text)
+        print(links)
         return articles
 
     def save_words(article, text):
