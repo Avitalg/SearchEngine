@@ -30,11 +30,11 @@ class AdvanceSearch(TemplateView):
                         wordlist.append(word)
                 if start == -111:
                     self.oprt = "not"
-                start = pushChars.index(results[place])
-                index = place
+                start = place
+                index = pushChars.index(results[place])
             elif results[place] in popChars:
-                if start == popChars.index(results[place]):
-                    find_results, words = self.parse_words(data, start+1 , place)
+                if index == popChars.index(results[place]):
+                    find_results, words = self.parse_words(data, start+1, place)
                     for result in find_results:
                         articles.append(result)
 
@@ -63,6 +63,11 @@ class AdvanceSearch(TemplateView):
 
         # for result in results:
         set(articles)
+        excluded_word = ResultsView.excluded_words(wordlist)
+        wordlist = ([s.strip("'") for s in wordlist])
+
+        wordlist = list(set(wordlist) - set(excluded_word))
+
         return render(request, 'search/results.html', {"results": articles, "error": error, "keywords": wordlist,
                                                        "searcher": self.searches})
 

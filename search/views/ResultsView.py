@@ -31,6 +31,7 @@ class ResultsView(generic.ListView):
     def or_statement(wordlist, not_stat=False):
         wordlist = [word for word in wordlist if word]
         exclude_words = list()
+        print('or')
         if not not_stat:
             exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([s.strip("'") for s in wordlist])
@@ -40,14 +41,18 @@ class ResultsView(generic.ListView):
 
     def and_statement(wordlist, not_stat=False):
         wordlist = [word for word in wordlist if word]
+        print("and")
         articles = articles_id = []
         exclude_words = list()
         if not not_stat:
             exclude_words = ResultsView.excluded_words(wordlist)
 
         wordlist = ([s.strip("'") for s in wordlist])
+        print(wordlist)
+        print(exclude_words)
         words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values_list('article', flat=True)
+
         counts = Counter(words)
 
         for word in words:
@@ -67,7 +72,7 @@ class ResultsView(generic.ListView):
         elif operand == "and":
             articles = ResultsView.and_statement(wordlist, True)
 
-        return Article.objects.exclude(id__in=articles).exclude(hide=True)
+        return Article.objects.exclude(id__in=articles)
 
     def excluded_words(wordlist):
         exclude_words = Stoplist.objects.values_list("data", flat=True)
