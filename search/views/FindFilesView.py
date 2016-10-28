@@ -118,8 +118,6 @@ class FindFilesView(generic.ListView):
                     pfile_word.save()
                     pfile_word.words.add(new_word)
 
-
-
     def check_if_url_exists(self, url):
         return Article.objects.filter(url=url).exists()
 

@@ -13,6 +13,7 @@ app_name = 'search'
 
 urlpatterns = [
     url('articles/', views.ArticlesView.as_view(), name='articles'),
+    url('help/', views.HelpView.as_view(), name='help'),
     url(r'^advance-search/$', views.AdvanceSearch.as_view(), name='advance-search'),
     url(r'^advance/results/', views.AdvanceSearch.as_view(), name='advance-results'),
     url('results/', views.ResultsView.as_view(), name='results'),

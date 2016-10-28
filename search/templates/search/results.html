@@ -30,10 +30,20 @@
         </p>
       {%endfor%}
 </article>
-
-
 {%endif%}
 
+<div class="searched">
+    <h4>Privious Searches</h4>
+    {%if searcher%}
+    <ul>
+        {%for search in searcher%}
+        <li>{{search}}</li>
+        {%endfor%}
+    </ul>
+    {%else%}
+        No Previous Searches
+    {%endif%}
+</div>
 
 {% endblock %}
 

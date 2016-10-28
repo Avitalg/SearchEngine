@@ -48,6 +48,45 @@ mark{
     float: right;
 }
 
+.help_wrapper{
+    width: 95%;
+    direction: rtl;
+    margin-bottom: 40px;
+}
+
+.button{
+    margin-top: 10px;
+}
+
+#inputText{
+
+    float: left;
+    width: 70%;
+}
+
+.searched{
+    float: right;
+    width: 25%;
+    margin-top: 10px;
+    border: 1px dotted #676;
+    padding: 5px;
+}
+
+.searched h4{
+    border-bottom: 1px #9F2 solid;
+}
+
+
+.rtl{
+    direction: rtl;
+}
+
+.go-back.rtl{
+    margin-top: 68px;
+    position: absolute;
+    margin-left: 30px;
+}
+
 button#back, button#go-back {
     float: right;
     margin-right: 78px;
