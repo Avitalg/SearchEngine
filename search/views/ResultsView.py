@@ -4,13 +4,15 @@ import re
 from collections import Counter
 from django.views import generic
 from django.db.models import Case, When
+# coding: utf-8
+
 
 class ResultsView(generic.ListView):
     template_name = 'search/results.html'
     context_object_name = 'results'
 
     def post(self, request, *args, **kwargs):
-        data = request.POST.get('find', "")
+        data = str(request.POST.get('find', ""))
         smeth = request.POST.get('smeth', "or")
         exclude_words = Stoplist.objects.values_list("data", flat=True)
         wordlist = re.findall(r"[\w']+", data)
@@ -34,7 +36,7 @@ class ResultsView(generic.ListView):
         print('or')
         if not not_stat:
             exclude_words = ResultsView.excluded_words(wordlist)
-        wordlist = ([s.strip("'") for s in wordlist])
+        wordlist = ([str(s).strip("'") for s in wordlist])
         words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values("article")
         return Article.objects.filter(id__in=words).exclude(hide=True)
@@ -48,15 +50,15 @@ class ResultsView(generic.ListView):
             exclude_words = ResultsView.excluded_words(wordlist)
 
         wordlist = ([s.strip("'") for s in wordlist])
-        print(wordlist)
-        print(exclude_words)
+        # print(wordlist)
+        # print(exclude_words)
         words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values_list('article', flat=True)
 
         counts = Counter(words)
 
         for word in words:
-            if counts[word] == (len(set(wordlist) - set(exclude_words))):
+            if counts[word] > 0.6*(len(set(wordlist) - set(exclude_words))):
                 articles_id.append(word)
 
         articles_id = set(articles_id)
@@ -77,8 +79,8 @@ class ResultsView(generic.ListView):
     def excluded_words(wordlist):
         exclude_words = Stoplist.objects.values_list("data", flat=True)
         cancel_stoplist = (["'" + word + "'" for word in exclude_words])
-        print(cancel_stoplist)
-        print(wordlist)
+        # print(cancel_stoplist)
+        # print(wordlist)
         exclude_words = set(cancel_stoplist) - set(wordlist)
         exclude_words = ([word[1:len(word) - 1] for word in exclude_words])
         print(exclude_words)

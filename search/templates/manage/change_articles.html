@@ -9,7 +9,7 @@
 <h3>All Articles</h3>
     {% for article in all_articles %}
     <div class="result change">
-        <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
+        <h4><a href="{{article.get_url}}"><span>{{article.id}}.</span>{{article.get_title }}</a></h4>
         <div class="change_article">
             <div class="link">{{article.get_url}}</div>
             <div class="summary">{{article.get_summary }}...</div>

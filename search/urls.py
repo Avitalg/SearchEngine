@@ -19,6 +19,7 @@ urlpatterns = [
     url('manage/articles/', views.ArticlesManageView.as_view(), name='articles-manage'),
     url('manage/find/', views.FindFilesView.as_view(), name='find-files'),
     url('manage/update/', views.UpdateFilesView.as_view(), name='update-files'),
+    url('manage/postingfile/', views.PostingfileView.as_view(), name='postingfile'),
     url('manage/change/', views.ChangeFilesView.as_view(), name='change-files'),
     url('manage/delete/', views.DeleteFilesView.as_view(), name='delete-files'),
     url('manage/stoplist/view/', views.StoplistView.as_view(), name='stoplist-view'),

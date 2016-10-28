@@ -6,6 +6,8 @@ import re
 from django.core.urlresolvers import reverse
 from django.core.files.storage import default_storage
 
+# -*- coding: utf-8 -*-
+
 
 class Article(models.Model):
     title = models.CharField(max_length=100, default="", blank=False)

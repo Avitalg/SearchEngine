@@ -7,7 +7,7 @@
 <h3>Stoplist</h3>
     {% for word in all_words %}
     <div class="stoplist result">
-        <h4><span>{{word.id}}</span>{{word.data }}</h4>
+        <h4><span>id:{{word.id}}</span>{{word.data }}</h4>
         <div class="stopform">
             <form action="" method="post">
                 {% csrf_token %}

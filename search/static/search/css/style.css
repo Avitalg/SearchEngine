@@ -51,7 +51,12 @@ mark{
 button#back, button#go-back {
     float: right;
     margin-right: 78px;
-    margin-top: 11px;
+    margin-top: 73px;
+}
+
+.stoplist.result h4 span{
+    color: red;
+    padding-right: 10px;
 }
 
 .form{
@@ -64,8 +69,8 @@ button#back, button#go-back {
 }
 
 #background{
-    background: url("../images/bg1.jpg");
-    position: absolute;
+    background: url("../images/bg1.jpg") repeat-y;
+    position: fixed;
     top: 0;
     right: 0;
     left: 0;
@@ -77,6 +82,7 @@ button#back, button#go-back {
 h1, h2, h3{
     border-bottom: 2px solid gainsboro;
     display: inline-block;
+    margin-top: 72px;
 }
 
 a{

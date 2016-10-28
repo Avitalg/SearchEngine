@@ -1,0 +1,28 @@
+{%extends 'search/base.html' %}
+{%block title%}Postinglist{%endblock%}
+
+{% block body %}
+<button id="go-back" class="btn btn-warning">Back</button>
+{% if results %}
+<h3>All Words</h3>
+    <div class="table-responsive">
+        <table id="postingfile" class="table table-hover">
+            <thead>
+            <tr><th>Word</th><th>Data</th></tr>
+            </thead>
+            <tbody>
+            {% for result in results%}
+            <tr>
+                <td>{{result.data}}</td>
+                <td>{{result.words.all}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+{% else %}
+    <h3>{{error_msg}}</h3>
+{% endif %}
+
+{% endblock %}

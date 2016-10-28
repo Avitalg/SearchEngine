@@ -18,9 +18,6 @@
     <p>{{error}}</p>
 {%else%}
 
-<pre>
-    {{results}}
-</pre>
 <article id="inputText">
     {%for article in results%}
     <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>

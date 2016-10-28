@@ -2,7 +2,7 @@ from search.models import Article, Postingfile
 from django.views import generic
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
-import traceback
+from django.db.models import Count
 
 
 class ManageView(generic.TemplateView):
@@ -17,8 +17,20 @@ class ManageStoplistView(generic.TemplateView):
     template_name = 'manage/manage-stoplist.html'
 
 
+
 class SettingsView(generic.TemplateView):
     template_name = 'manage/manage-settings.html'
+
+
+class PostingfileView(generic.ListView):
+    model = Postingfile
+    template_name = 'manage/postingfile.html'
+    context_object_name = 'results'
+
+    def get_queryset(self):
+        return Postingfile.objects.all().annotate(num_articles=Count('words')) \
+                .order_by('-num_articles', 'data')
+
 
 class ChangeFilesView(generic.ListView):
     model = Article

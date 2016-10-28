@@ -6,7 +6,7 @@ from django.shortcuts import render
 from bs4 import BeautifulSoup
 from search.models import Article, Word, Postingfile as Pfile
 from django.views import generic
-
+# coding: utf-8
 
 class FindFilesView(generic.ListView):
     model = Article
@@ -44,7 +44,7 @@ class FindFilesView(generic.ListView):
         for a in links:
             o = urlparse(a["href"])
             if not o.scheme:
-                if not a["href"][0] == '/':
+                if a["href"] and not a["href"][0] == '/':
                     a["href"] = url_domain + '/' + a["href"]
                 else:
                     a["href"] = url_domain + a["href"]
@@ -64,7 +64,7 @@ class FindFilesView(generic.ListView):
             if not self.check_if_url_exists(link):
                 r = requests.get(link)
                 if r.status_code == 200:
-                    html_content = r.text
+                    html_content = r.content
                     soup = BeautifulSoup(html_content)
                     #clear script and style elements
                     for script in soup(["script", "style"]):

@@ -13,7 +13,6 @@ class ArticlesView(generic.ListView):
         return context
 
     def get_queryset(self):
-        print("error")
         return Article.objects.all().exclude(hide=True)
 
 

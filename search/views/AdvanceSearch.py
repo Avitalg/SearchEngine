@@ -12,7 +12,7 @@ class AdvanceSearch(TemplateView):
     oprt = "or"
 
     def post(self, request, *args, **kwargs):
-        data = request.POST.get('find', "")
+        data = str(request.POST.get('find', ""))
         results = list(data)
         articles = []
         pushChars, popChars = "<({[", ">)}]"
