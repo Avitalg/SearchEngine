@@ -97,24 +97,25 @@ class FindFilesView(generic.ListView):
         word_list = [word.lower() for word in word_list]
         word_list.sort()
 
-        for word in word_list:
+        for index in range(len(word_list)):
             try:
-                new_word = Word.objects.get(data=word, article=article)
+                new_word = Word.objects.get(data=word_list[index], article=article)
                 new_word.amount += 1
                 new_word.save()
             except (ObjectDoesNotExist, Word.DoesNotExist):
                 new_word = Word()
                 new_word.article = article
-                new_word.data = word
+                new_word.data = word_list[index]
+                new_word.place = index
                 new_word.amount = 1
                 new_word.save()
             finally:
                 try:
-                    pfile_word = Pfile.objects.get(data=word)
+                    pfile_word = Pfile.objects.get(data=word_list[index])
                     pfile_word.words.add(new_word)
                     pfile_word.save()
                 except (ObjectDoesNotExist, Word.DoesNotExist):
-                    pfile_word = Pfile(data=word)
+                    pfile_word = Pfile(data=word_list[index])
                     pfile_word.save()
                     pfile_word.words.add(new_word)
 

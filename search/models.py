@@ -35,6 +35,7 @@ class Word(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     data = models.CharField(max_length=20)
     amount = models.IntegerField(default=1)
+    place = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['-amount', 'article']

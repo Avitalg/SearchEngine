@@ -82,20 +82,36 @@ class AdvanceSearch(TemplateView):
         and_chars, or_chars, not_chars, easy_and_chars = "&&", "||", "^", "&"
         new_data = data[start:place]
         wordlist = re.split("&&|\|\|", new_data)
+        result = list()
 
         if new_data.find(and_chars) > -1:
+            wordlist = new_data.split(and_chars)
+            if self.oprt == "not":
+                result = ResultsView.not_statement(wordlist, "and")
+            else:
+                print("and")
+                result = ResultsView.and_statement(wordlist)
             self.oprt = "and"
         elif new_data.find(easy_and_chars) > -1:
+            wordlist = re.split("&&|&|\|\|", new_data)
+            if self.oprt == "not":
+                result = ResultsView.not_statement(wordlist, "easy_and")
+            else:
+                print("easy and")
+
+                result = ResultsView.easy_and_statement(wordlist)
             self.oprt = "easy_and"
         else:
-           self.oprt = "or"
-
-        if self.oprt == "not":
-            result = ResultsView.not_statement(wordlist, self.oprt)
-        else:
-            result = ResultsView.or_statement(wordlist)
+            wordlist = new_data.split(or_chars)
+            if self.oprt == "not":
+                result = ResultsView.not_statement(wordlist, "or")
+            else:
+                result = ResultsView.or_statement(wordlist)
+            self.oprt = "or"
 
         ResultsView.searches.insert(0, new_data)
         #remove empty words
         wordlist = [word for word in wordlist if word]
+        print("res:")
+        # print(result)
         return result, wordlist

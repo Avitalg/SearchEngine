@@ -48,7 +48,7 @@ class ResultsView(generic.ListView):
 
     def easy_and_statement(wordlist, not_stat=False):
         wordlist = [word for word in wordlist if word]
-        print("and")
+        print("easy and")
         articles_id = []
         exclude_words = list()
         if not not_stat:
@@ -66,6 +66,8 @@ class ResultsView(generic.ListView):
                 articles_id.append(word)
 
         articles_id = set(articles_id)
+        print("ids")
+        print(articles_id)
         return Article.objects.filter(id__in=articles_id).exclude(hide=True)
         # return Postingfile.objects.filter(data__in=wordlist).exclude(data__in=exclude_words)
 
