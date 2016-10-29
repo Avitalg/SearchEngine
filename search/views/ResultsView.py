@@ -48,32 +48,28 @@ class ResultsView(generic.ListView):
 
     def easy_and_statement(wordlist, not_stat=False):
         wordlist = [word for word in wordlist if word]
-        print("easy and")
+        print("easy and", wordlist)
         articles_id = []
         exclude_words = list()
         if not not_stat:
             exclude_words = ResultsView.excluded_words(wordlist)
 
         wordlist = ([s.strip("'") for s in wordlist])
+
         exclude_words = list(set(exclude_words) - set(wordlist))
         words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values_list('article', flat=True)
 
         counts = Counter(words)
-
         for word in words:
             if counts[word] > 0.6*(len(set(wordlist) - set(exclude_words))):
                 articles_id.append(word)
 
         articles_id = set(articles_id)
-        print("ids")
-        print(articles_id)
         return Article.objects.filter(id__in=articles_id).exclude(hide=True)
-        # return Postingfile.objects.filter(data__in=wordlist).exclude(data__in=exclude_words)
 
     def and_statement(wordlist, not_stat=False):
         wordlist = [word for word in wordlist if word]
-        print("and")
         articles_id = []
         exclude_words = list()
         if not not_stat:
@@ -81,6 +77,8 @@ class ResultsView(generic.ListView):
 
         wordlist = ([s.strip("'") for s in wordlist])
         exclude_words = list(set(exclude_words) - set(wordlist))
+        print("ex:", exclude_words)
+        print("sec:", wordlist)
         # print("test:")
         # print(wordlist)
         # print(exclude_words)
@@ -92,12 +90,13 @@ class ResultsView(generic.ListView):
         for word in words:
             if counts[word] == (len(set(wordlist) - set(exclude_words))):
                 articles_id.append(word)
-
         articles_id = set(articles_id)
+        print(articles_id)
         return Article.objects.filter(id__in=articles_id).exclude(hide=True)
         # return Postingfile.objects.filter(data__in=wordlist).exclude(data__in=exclude_words)
 
     def not_statement(wordlist, operand="or"):
+        print("okkkkk")
         articles = list()
         exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([s.strip("'") for s in wordlist])

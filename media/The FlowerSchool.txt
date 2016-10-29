@@ -1,4 +1,0 @@
-title : The Flower-School
-poet : Rabindranath Tagore
-summary : \\r\\n                                When storm-clouds rumble in the sky and June showers come down.\\r\\n<br>    The moist east wind comes marching over the heath to blow its\\r\\n<br>bagpipes among the bamboos.\\r\\n<br>    Then crowds of flowers come out of a sudden, from nobody knows\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t<a href="/poem/the-flower-school/">read more &raquo;</a>\\r\\n\\t\\t\\t\\t\\t\\t\\t
-url : /poem/the-flower-school/

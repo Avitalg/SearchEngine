@@ -6,6 +6,7 @@ from django.shortcuts import render
 from bs4 import BeautifulSoup
 from search.models import Article, Word, Postingfile as Pfile
 from django.views import generic
+import os
 # coding: utf-8
 
 
@@ -72,7 +73,14 @@ class FindFilesView(generic.ListView):
 
                     title = soup.title.string
                     text = soup.body.get_text()
+                    filename = 'media/' + title + '.txt'
+                    file = open(filename, 'w')
+                    file.write(text)
+                    file.close()
 
+                    file = open(filename, 'r')
+                    text = file.read()
+                    print(text)
                     # break into lines and remove leading and trailing space on each
                     lines = (line.strip() for line in text.splitlines())
                     # break multi-headlines into a line each
@@ -83,13 +91,16 @@ class FindFilesView(generic.ListView):
                     regex = re.compile(r'[\n\r\t]')
                     text = text.rstrip()
                     text = regex.sub(' ', text)
+
                     summary = text[:300]
                     article = Article(title=title, summary=summary, url=link)
                     article.save()
                     articles.append(article)
                     article = Article.objects.get(pk=article.pk)
                     FindFilesView.save_words(article, text)
-        print(links)
+                    file.close()
+                    os.remove(filename)
+
         return articles
 
     def save_words(article, text):
