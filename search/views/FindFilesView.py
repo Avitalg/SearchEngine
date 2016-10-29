@@ -8,6 +8,7 @@ from search.models import Article, Word, Postingfile as Pfile
 from django.views import generic
 # coding: utf-8
 
+
 class FindFilesView(generic.ListView):
     model = Article
     context_object_name = 'all_articles'
@@ -32,7 +33,6 @@ class FindFilesView(generic.ListView):
         articles = self.crawling_url(url, narticles)
         return render(request, "search/results.html", {'results': articles})
 
-
     def crawling_url(self, url, article_number):
         split_url = url.rsplit('/', 1)
         url_domain = split_url[0]
@@ -55,18 +55,18 @@ class FindFilesView(generic.ListView):
             hrefs.append(a["href"])
         hrefs = set(hrefs[:article_number])
 
-        articles = self.save_articles(hrefs)
+        articles = FindFilesView.save_articles(hrefs)
         return articles
 
-    def save_articles(self, links):
+    def save_articles(links):
         articles = list()
         for link in links:
-            if not self.check_if_url_exists(link):
+            if not FindFilesView.check_if_url_exists(link):
                 r = requests.get(link)
                 if r.status_code == 200:
                     html_content = r.content
                     soup = BeautifulSoup(html_content)
-                    #clear script and style elements
+                    # clear script and style elements
                     for script in soup(["script", "style"]):
                         script.extract()
 
@@ -97,28 +97,28 @@ class FindFilesView(generic.ListView):
         word_list = [word.lower() for word in word_list]
         word_list.sort()
 
-        for index in range(len(word_list)):
+        for word in word_list:
+            print(word)
             try:
-                new_word = Word.objects.get(data=word_list[index], article=article)
+                new_word = Word.objects.get(data=word, article=article)
                 new_word.amount += 1
                 new_word.save()
             except (ObjectDoesNotExist, Word.DoesNotExist):
                 new_word = Word()
                 new_word.article = article
-                new_word.data = word_list[index]
-                new_word.place = index
+                new_word.data = word
                 new_word.amount = 1
                 new_word.save()
             finally:
                 try:
-                    pfile_word = Pfile.objects.get(data=word_list[index])
+                    pfile_word = Pfile.objects.get(data=word)
                     pfile_word.words.add(new_word)
                     pfile_word.save()
                 except (ObjectDoesNotExist, Word.DoesNotExist):
-                    pfile_word = Pfile(data=word_list[index])
+                    pfile_word = Pfile(data=word)
                     pfile_word.save()
                     pfile_word.words.add(new_word)
 
-    def check_if_url_exists(self, url):
+    def check_if_url_exists(url):
         return Article.objects.filter(url=url).exists()
 

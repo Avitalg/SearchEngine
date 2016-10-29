@@ -58,6 +58,10 @@ mark{
     margin-top: 10px;
 }
 
+.wrapper{
+    width:  95%;
+}
+
 #inputText{
 
     float: left;
@@ -71,6 +75,8 @@ mark{
     border: 1px dotted #676;
     padding: 5px;
 }
+
+
 
 .searched h4{
     border-bottom: 1px #9F2 solid;
@@ -120,7 +126,6 @@ button#back, button#go-back {
 
 h1, h2, h3{
     border-bottom: 2px solid gainsboro;
-    display: inline-block;
     margin-top: 72px;
 }
 

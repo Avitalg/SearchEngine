@@ -11,38 +11,41 @@
 
 {% block body %}
 <button id="go-back" class="btn btn-warning">Back</button>
-<h1>Results</h1>
-{%if not results%}
-<p>No Results</p>
-{%elif error%}
-    <p>{{error}}</p>
-{%else%}
-
-<article id="inputText">
-    {%for article in results%}
-    <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
-        <p>
-            <div class="link">{{article.get_url}}</div>
-            <div class="summary">{{article.get_summary }}...</div>
-        </p>
-        <p class="print">
-            <button class="send-print" onclick="printFile('{{article.url}}')">Print</button>
-        </p>
-      {%endfor%}
-</article>
-{%endif%}
-
-<div class="searched">
-    <h4>Privious Searches</h4>
-    {%if searcher%}
-    <ul>
-        {%for search in searcher%}
-        <li>{{search}}</li>
-        {%endfor%}
-    </ul>
+<div class="wrapper">
+    <h1>Results</h1>
+    {%if not results%}
+    <p>No Results</p>
+    {%elif error%}
+        <p>{{error}}</p>
     {%else%}
-        No Previous Searches
+
+    <article id="inputText">
+        {%for article in results%}
+        <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
+            <p>
+                <div class="link">{{article.get_url}}</div>
+                <div class="summary">{{article.get_summary }}...</div>
+            </p>
+            <p class="print">
+                <button class="send-print btn" onclick="printFile('{{article.url}}')">Print</button>
+            </p>
+          {%endfor%}
+    </article>
     {%endif%}
+
+    <div class="searched">
+        <h4>Privious Searches</h4>
+        {%if searcher%}
+        <ul>
+            {%for search in searcher%}
+            <li>{{search}}</li>
+            {%endfor%}
+        </ul>
+        {%else%}
+            No Previous Searches
+        {%endif%}
+    </div>
+
 </div>
 
 {% endblock %}
