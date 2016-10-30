@@ -40,8 +40,10 @@ class ResultsView(generic.ListView):
         print("words:", wordlist)
         exclude_words = list()
         if not not_stat:
+            print("ok")
             exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([str(s).strip('"') for s in wordlist])
+
         words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values("article")
         articles = Article.objects.filter(id__in=words).exclude(hide=True)
@@ -57,7 +59,6 @@ class ResultsView(generic.ListView):
 
         wordlist = ([s.strip('"') for s in wordlist])
 
-        exclude_words = list(set(exclude_words) - set(wordlist))
         words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values_list('article', flat=True)
 
@@ -111,7 +112,9 @@ class ResultsView(generic.ListView):
 
     def excluded_words(wordlist):
         exclude_words = Stoplist.objects.values_list("data", flat=True)
-        cancel_stoplist = (["'" + word + "'" for word in exclude_words])
+        cancel_stoplist = (['"' + word + '"' for word in exclude_words])
         exclude_words = set(cancel_stoplist) - set(wordlist)
         exclude_words = ([word[1:len(word) - 1] for word in exclude_words])
+        print("check")
+        print(exclude_words)
         return exclude_words

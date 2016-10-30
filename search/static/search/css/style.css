@@ -46,6 +46,7 @@ mark{
 
 .stopform{
     float: right;
+    line-height: 3;
 }
 
 .help_wrapper{
@@ -95,13 +96,18 @@ mark{
 
 button#back, button#go-back {
     float: right;
-    margin-right: 78px;
-    margin-top: 73px;
+    margin-right: 53px;
+    margin-top: -13px;
 }
 
 .stoplist.result h4 span{
     color: red;
     padding-right: 10px;
+}
+
+.stoplist.result h4{
+    margin: 0;
+
 }
 
 .form{
