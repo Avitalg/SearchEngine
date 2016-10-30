@@ -80,7 +80,6 @@ class FindFilesView(generic.ListView):
 
                     file = open(filename, 'r')
                     text = file.read()
-                    print(text)
                     # break into lines and remove leading and trailing space on each
                     lines = (line.strip() for line in text.splitlines())
                     # break multi-headlines into a line each
@@ -109,7 +108,6 @@ class FindFilesView(generic.ListView):
         word_list.sort()
 
         for word in word_list:
-            print(word)
             try:
                 new_word = Word.objects.get(data=word, article=article)
                 new_word.amount += 1

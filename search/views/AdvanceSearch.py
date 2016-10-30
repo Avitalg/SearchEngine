@@ -1,203 +1,158 @@
 from django.views.generic import TemplateView
-from django.shortcuts import render
 from search.models import Article
 from .ResultsView import ResultsView
 import re
+from django.shortcuts import render
 
 
 class AdvanceSearch(TemplateView):
     template_name = 'search/advance.html'
     model = Article
-    oprt = "or"
+    first_not_flag, second_not_flag = False, False
 
     def post(self, request):
         data = str(request.POST.get('find', ""))
-        my_data = data
-        results = list(data)
-        articles = []
-        push_chars, pop_chars = "<({[", ">)}]"
-        and_chars, or_chars, not_chars = "&&", "||", "^"
-        index, start, second_start,second_index, error, start_word, not_place = -1, -1, -1, -1, "", -1, -1
+        first_start, second_start, second_end = -1, -1, -1
+        results = []
         wordlist = []
+        error = ""
+        first_result_flag = True
         ResultsView.searches.insert(0, data)
 
-        for place in range(len(results)):
-            # find <({[
-            if results[place] in push_chars:
-                # start of word without sign
-                if start == -11:
-                    find_results, words = self.parse_words(my_data, start_word, place)
-                    if start_word > 0 and results[start_word-1] == "&":
-                        articles = AdvanceSearch.and_articles(articles, find_results)
+        for place in range(len(data)):
+            if data[place] == "^" and first_start == -1:
+                self.first_not_flag = True
+            elif data[place] == "^" and second_start == -1:
+                self.second_not_flag = True
+            elif data[place] == "(":
+                first_start = place
+            elif data[place] == "[":
+                second_start = place
+            elif data[place] == ")":
+                if second_end == -1 and second_start != -1:
+                    error = "Error. No closing brackets to [."
+                elif first_start == -1:
+                    error = "Error. No opening bracket for )."
+                else:
+                    articles, words = self.parse_brackets(data[first_start+1:place],first_start, second_start, second_end)
+                    wordlist = set(list(wordlist) + list(words))
+                    if first_result_flag:
+                        results = articles
+                        first_result_flag = False
                     else:
-                        articles = AdvanceSearch.or_articles(articles, find_results)
-                    for word in words:
-                        wordlist.append(word)
-                    start = place
-                    index = push_chars.index(results[place])
-                # if 'not' before brackets
-                elif (start == -111 or second_start == -111) and not_place == place-1:
-                    self.oprt = "not"
-                    if second_start == -111:
-                        second_start = place
-                        second_index = push_chars.index(results[place])
-                    else:
-                        start = place
-                        index = push_chars.index(results[place])
-                elif self.oprt == "not" and start != -1:
-                    second_start = place
-                    second_index = push_chars.index(results[place])
-                elif start != -1:
-                    second_start = place
-                    second_index = push_chars.index(results[place])
+                        if second_start > -1:
+                            operator = self.find_operator(data, second_start, second_end)
+                        else:
+                            operator = self.find_operator(data, first_start, place)
+                        results = self.filter_articles(results, articles, operator)
+                    first_start = -1
+                    self.first_not_flag = False
+                    second_start, second_end = -1, -1
+            elif data[place] == "]":
+                if second_start == -1:
+                    error = "No opening bracket for ]."
+                second_end = place
+                articles, words = self.parse_brackets(data[second_start:place], first_start, second_start)
+                if first_result_flag:
+                    results = articles
+                    first_result_flag = False
                 else:
-                    start = place
-                    index = push_chars.index(results[place])
-            # find >)}]
-            elif results[place] in pop_chars:
-                if index == pop_chars.index(results[place]):
-                    find_results, words = self.parse_words(data, start+1, place)
-                    if start > -1 and ((results[start-1] == "&") or self.oprt == "and"):
-                        articles = AdvanceSearch.and_articles(articles, find_results)
-                    elif start > -1 and (results[start-1] == "|" or self.oprt == "or"):
-                        articles = AdvanceSearch.or_articles(articles, find_results)
-                    elif start > -1 and (results[start-1] == "^" or self.oprt == "not"):
-                        articles = not AdvanceSearch.not_articles(articles, find_results)
-                    for word in words:
-                        wordlist.append(word)
-                    start = -1
-                elif second_index == pop_chars.index(results[place]):
-                    find_results, words = self.parse_words(data, second_start + 1, place)
-                    if results[second_start-1] == "^":
-                        self.oprt = "not"
-                    if second_start > 0 and results[second_start-1] == "&":
-                        articles = AdvanceSearch.and_articles(articles, find_results)
-                    elif second_start > 0 and results[second_start-1] == "|":
-                        articles = AdvanceSearch.or_articles(articles, find_results)
-                    elif second_start > 0 and results[second_start-1] == "^":
-                        articles = AdvanceSearch.not_articles(articles, find_results)
-                    else:
-                        articles = find_results
-                    for word in words:
-                        wordlist.append(word)
-                    second_start = -1
-                else:
-                    error = "Search not valid. No opening brackets to -" + results[place]
-                    break
-            # find ^
-            elif results[place] == not_chars:
-                not_place = place
-                if start == -1:
-                    start = -111
-                else:
-                    second_start = -111
-            # start of word without sign
-            elif start == -1:
-                start_word = place
-                start = -11
-        if start == -11:
-            find_results, words = self.parse_words(data, start_word, len(results))
-            if self.oprt == "or":
-                articles = set(list(articles) + list(find_results))
-            elif self.oprt == "and" or self.oprt == "easy_and":
-                if articles:
-                    articles = set(find_results) & set(articles)
-                else:
-                    articles = find_results
-            for word in words:
-                wordlist.append(word)
-        elif start != -1:
-            error = "Search not valid. No closing brackets to -" + results[index]
+                    wordlist = set(list(wordlist) + list(words))
+                    operator = self.find_operator(data, second_start, second_end)
+                    results = self.filter_articles(results, articles, operator)
+                self.second_not_flag = False
 
-        # for result in results:
-        set(articles)
-        excluded_word = ResultsView.excluded_words(wordlist)
-        wordlist = ([s.strip("'") for s in wordlist])
-
-        wordlist = list(set(wordlist) - set(excluded_word))
-
-        return render(request, 'search/results.html', {"results": articles, "error": error, "keywords": wordlist,
+        if first_result_flag:
+            results, words = self.parse_brackets(data, 0)
+            wordlist = set(list(wordlist) + list(words))
+        wordlist = list(wordlist)
+        return render(request, 'search/results.html', {"results": results, "error": error, "keywords": wordlist,
                                                        "searcher": ResultsView.searches})
 
-    def parse_words(self, data, start, place):
-        and_chars, or_chars, not_chars, easy_and_chars = "&&", "||", "^", "&"
-        new_data = data[start:place]
-        wordlist = re.split("&&|\|\||\^|&", new_data)
+    def clean_string(str):
+        str = str.replace("^", "")
+        str = str.replace("[", "")
+        str = str.replace("]", "")
+        str = str.replace("(", "")
+        str = str.replace(")", "")
+        return str
+
+    def parse_brackets(self, data, first_start, second_start=-1, second_end=-1):
+
+        if second_end > -1:
+            data = data[:second_start] + data[second_end + 1:]
+        data = AdvanceSearch.clean_string(data)
+
+        print(data)
+        if data.find("&&") > -1:
+            article = self.get_and_articles(data, first_start, second_start)
+        elif data.find("&") > -1:
+            return self.get_easy_and_articles(data, first_start, second_start)
+        else:
+            article = self.get_or_articles(data, first_start, second_start)
+        print("!!!!!")
+        print(article)
+        return article
+
+    def get_and_articles(self, data, first_start, second_start):
+        wordlist = re.split("&&", data)
+        # delete empty strings
         wordlist = [word for word in wordlist if word]
-        result = list()
-        type, type2, not_sign = AdvanceSearch.find_type(new_data)
+        print("words:", wordlist)
+        print("flags: 1-", self.first_not_flag, ",2-",self.second_not_flag)
+        if (second_start > -1 and self.second_not_flag) or \
+                (first_start > -1 and self.first_not_flag):
+            return ResultsView.not_statement(wordlist, "and"), wordlist
 
-        check_double_brkts = re.findall(r"(.*?)\[.*\]+", new_data)
-        regex = re.compile('[^a-zA-Z]')
-        type = str()
-        type2 = str()
-        if check_double_brkts and check_double_brkts[0] != '':
-            words_data = re.findall(r"(.*?)\[.*\]+", new_data)
-            type, type2, not_sign2 = AdvanceSearch.find_type(words_data)
+        return ResultsView.and_statement(wordlist), wordlist
 
-            words_data = [regex.sub('', word) for word in words_data if word]
+    def get_easy_and_articles(self, data, first_start, second_start):
+        wordlist = re.split("&", data)
+        # delete empty strings
+        wordlist = [word for word in wordlist if word]
+        if (second_start > -1 and self.second_not_flag) or \
+                (first_start > -1 and self.first_not_flag):
+            return ResultsView.not_statement(wordlist, "easy-and"), wordlist
 
-        if (not type or (type and type == "&" and type2 == '&')) and new_data.find(and_chars) > -1:
-            # wordlist = new_data.split(and_chars)
-            if check_double_brkts and check_double_brkts[0] != '':
-                wordlist = words_data
+        return ResultsView.easy_and_statement(wordlist), wordlist
 
-            if self.oprt == "not" and not_sign:
-                result = ResultsView.not_statement(wordlist, "and")
-            else:
-                result = ResultsView.and_statement(wordlist)
-            self.oprt = "and"
-        elif (not type or type == "&") and new_data.find(easy_and_chars) > -1:
-            wordlist = re.split("&&|&|\|\|", new_data)
-            if self.oprt == "not" and (not type2 or type2 == "^"):
-                result = ResultsView.not_statement(wordlist, "easy_and")
-            else:
-                result = ResultsView.easy_and_statement(wordlist)
-            self.oprt = "easy_and"
-        else:
-            wordlist = new_data.split(or_chars)
-            if self.oprt == "not" or (not type2 or type2 == "^") or data[start-2] == '^':
-                result = ResultsView.not_statement(wordlist, "or")
-            else:
-                result = ResultsView.or_statement(wordlist)
-            self.oprt = "or"
-        # remove empty words
-        return result, wordlist
+    def get_or_articles(self, data, first_start, second_start):
+        wordlist = re.split("\|\|", data)
+        # delete empty strings
+        wordlist = [word for word in wordlist if word]
+        if (second_start > -1 and self.second_not_flag) or \
+                (first_start > -1 and self.first_not_flag):
+            return ResultsView.not_statement(wordlist, "or"), wordlist
 
-    def and_articles(articles, find_results):
-        if not find_results:
-            find_results.add("")
-        if articles:
-            articles = set(articles) & set(find_results)
-        else:
-            articles = find_results
+        articles = ResultsView.or_statement(wordlist), wordlist
         return articles
 
-    def or_articles(articles, find_results):
-        if articles:
-            articles = set(list(articles) + list(find_results))
-        else:
-            articles = find_results
-        return articles
+    def find_operator(self, data, start, end):
+        if data[start-1] == '^':
+            start -= 1
+        if (start > 2 and data[start-1] == '&' and data[start-2] == '&') or\
+                (end+2 < len(data) and data[end+1] == '&' and data[end+2]):
+            return "and"
+        elif (start > 1 and data[start-1] == '&') or\
+                (end+1 < len(data) and data[end+1] == '&'):
+            return "easy-and"
+        elif (start > 2 and data[start-1] == '|' and data[start-2] == '|') or \
+                (end+2 < len(data) and data[end+1] == '|' and data[end+2] == '|'):
+            return "or"
 
-    def not_articles(articles, find_results):
-        if articles:
-            articles = set(articles) - set(find_results)
-        else:
-            articles = find_results
-        return articles
+    def filter_articles(self, results, articles, operator):
+        final_results = []
+        if operator == "and":
+            final_results = set(results) & set(articles)
+        elif operator == "or":
+            final_results = set(results) - set(articles)
+        elif operator == "easy-and":
+            max_list = results if len(results) >= len(articles) else articles
+            min_list = results if len(results) < len(articles) else articles
 
-    def find_type(words_data):
-        x = len(words_data)
-        y = len(words_data[x - 1])
-        type, type2 = "", ""
-        not_sign = False
-        if x > 0 and y > 0:
-            type = words_data[x - 1][y - 2]
-        if x > 0 and y > 1:
-            type2 = words_data[x - 1][y - 1]
-            if y > 2 and type2 == '^':
-                not_sign = True
-                type2 = words_data[x - 1][y - 3]
+            if len(set(max_list) - set(min_list)) < 0.6 * len(max_list):
+                final_results = set(max_list) - set(min_list)
+        return final_results
 
-        return type, type2, not_sign
+
+
