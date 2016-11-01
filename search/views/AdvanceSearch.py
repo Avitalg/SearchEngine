@@ -18,6 +18,7 @@ class AdvanceSearch(TemplateView):
         error = ""
         first_result_flag = True
         ResultsView.searches.insert(0, data)
+        data = data.lower()
 
         for place in range(len(data)):
             if data[place] == "^" and first_start == -1:
@@ -67,7 +68,8 @@ class AdvanceSearch(TemplateView):
             wordlist = set(list(wordlist) + list(words))
         wordlist = list(wordlist)
         return render(request, 'search/results.html', {"results": results, "error": error, "keywords": wordlist,
-                                                       "searcher": ResultsView.searches})
+                                                       "searcher": ResultsView.searches,
+                                                       "search": ResultsView.searches[len(ResultsView.searches)-1]})
 
     def clean_string(str):
         str = str.replace("^", "")
@@ -83,31 +85,26 @@ class AdvanceSearch(TemplateView):
             data = data[:second_start] + data[second_end + 1:]
         data = AdvanceSearch.clean_string(data)
 
-        print(data)
+        words = re.split("&&|&|\|\|", data)
+
         if data.find("&&") > -1:
-            article = self.get_and_articles(data, first_start, second_start)
+            article = self.get_and_articles(words, first_start, second_start)
         elif data.find("&") > -1:
-            return self.get_easy_and_articles(data, first_start, second_start)
+            return self.get_easy_and_articles(words, first_start, second_start)
         else:
-            article = self.get_or_articles(data, first_start, second_start)
-        print("!!!!!")
-        print(article)
+            article = self.get_or_articles(words, first_start, second_start)
         return article
 
-    def get_and_articles(self, data, first_start, second_start):
-        wordlist = re.split("&&", data)
+    def get_and_articles(self, wordlist, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
-        print("words:", wordlist)
-        print("flags: 1-", self.first_not_flag, ",2-",self.second_not_flag)
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
             return ResultsView.not_statement(wordlist, "and"), wordlist
 
         return ResultsView.and_statement(wordlist), wordlist
 
-    def get_easy_and_articles(self, data, first_start, second_start):
-        wordlist = re.split("&", data)
+    def get_easy_and_articles(self, wordlist, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
         if (second_start > -1 and self.second_not_flag) or \
@@ -116,8 +113,7 @@ class AdvanceSearch(TemplateView):
 
         return ResultsView.easy_and_statement(wordlist), wordlist
 
-    def get_or_articles(self, data, first_start, second_start):
-        wordlist = re.split("\|\|", data)
+    def get_or_articles(self, wordlist, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
         if (second_start > -1 and self.second_not_flag) or \
@@ -150,8 +146,8 @@ class AdvanceSearch(TemplateView):
             max_list = results if len(results) >= len(articles) else articles
             min_list = results if len(results) < len(articles) else articles
 
-            if len(set(max_list) - set(min_list)) < 0.6 * len(max_list):
-                final_results = set(max_list) - set(min_list)
+            if len(set(max_list) & set(min_list)) < 0.6 * len(max_list):
+                final_results = set(max_list) & set(min_list)
         return final_results
 
 

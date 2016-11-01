@@ -12,8 +12,9 @@ class ResultsView(generic.ListView):
 
     def post(self, request):
         data = str(request.POST.get('find', ""))
-        ResultsView.searches.insert(0, data)
         smeth = request.POST.get('smeth', "or")
+        ResultsView.searches.insert(0, data)
+        data = data.lower()
         exclude_words = Stoplist.objects.values_list("data", flat=True)
         wordlist = re.findall(r"[\w']+", data)
         wordlist = set(wordlist)
@@ -33,21 +34,20 @@ class ResultsView(generic.ListView):
 
         jsonword = ([s.strip('"') for s in jsonword])
 
-        return render(request, self.template_name, {'results': articles, 'keywords': jsonword, "searcher": ResultsView.searches})
+        return render(request, self.template_name, {'results': articles, 'keywords': jsonword,
+                                                    "searcher": ResultsView.searches,
+                                                    "search": ResultsView.searches[len(ResultsView.searches)-1]})
 
     def or_statement(wordlist, not_stat=False):
         wordlist = [word for word in wordlist if word]
-        print("words:", wordlist)
         exclude_words = list()
         if not not_stat:
-            print("ok")
             exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([str(s).strip('"') for s in wordlist])
 
         words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values("article")
         articles = Article.objects.filter(id__in=words).exclude(hide=True)
-        print("or art:", articles)
         return articles
 
     def easy_and_statement(wordlist, not_stat=False):
@@ -93,7 +93,6 @@ class ResultsView(generic.ListView):
 
     def not_statement(wordlist, operand="or"):
         articles = list()
-        print("not opt:", operand)
         exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([s.strip('"') for s in wordlist])
 
@@ -104,9 +103,7 @@ class ResultsView(generic.ListView):
             articles = ResultsView.and_statement(wordlist, True)
         elif operand == "easy-and":
             articles = ResultsView.easy_and_statement(wordlist, True)
-        print("not results:", articles)
         articles = Article.objects.exclude(id__in=articles)
-        print("not results:", articles)
         return articles
 
 
@@ -115,6 +112,4 @@ class ResultsView(generic.ListView):
         cancel_stoplist = (['"' + word + '"' for word in exclude_words])
         exclude_words = set(cancel_stoplist) - set(wordlist)
         exclude_words = ([word[1:len(word) - 1] for word in exclude_words])
-        print("check")
-        print(exclude_words)
         return exclude_words

@@ -44,14 +44,14 @@ class Word(models.Model):
 
 
 class Stoplist(models.Model):
-    data = models.CharField(max_length=20)
+    data = models.CharField(max_length=20, blank=False)
 
     def __str__(self):
         return str(self.data)
 
 
 class Postingfile(models.Model):
-    data = models.CharField(max_length=20)
+    data = models.CharField(max_length=20, blank=False)
     words = models.ManyToManyField(Word)
 
     def __str__(self):

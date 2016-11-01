@@ -49,6 +49,12 @@ mark{
     line-height: 3;
 }
 
+.sum{
+    font-size: 10px;
+    font-weight: 700;
+    color: grey;
+}
+
 .help_wrapper{
     width: 95%;
     direction: rtl;

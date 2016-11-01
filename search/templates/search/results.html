@@ -18,7 +18,7 @@
     {%elif error%}
         <p>{{error}}</p>
     {%else%}
-
+    <p class="sum">Results for: {{search}}. Number of results: {{results|length}}.</p>
     <article id="inputText">
         {%for article in results%}
         <h4><a href="{{article.get_url}}">{{article.get_title }}</a></h4>
