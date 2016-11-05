@@ -103,7 +103,6 @@ class AdvanceSearch(TemplateView):
     def get_and_articles(self, wordlist, sound, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
-        print("words:", wordlist)
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
             return ResultsView.not_statement(wordlist, "and", sound), wordlist
@@ -122,12 +121,10 @@ class AdvanceSearch(TemplateView):
     def get_or_articles(self, wordlist, sound, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
-        print("words:", wordlist)
 
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
             return ResultsView.not_statement(wordlist, "or", sound), wordlist
-        print("x", wordlist)
         return ResultsView.or_statement(wordlist, False, sound), wordlist
 
     def find_operator(self, data, start, end):

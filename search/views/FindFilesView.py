@@ -54,7 +54,6 @@ class FindFilesView(generic.ListView):
                     a["href"] = url_domain + a["href"]
             if urlparse(a["href"]).netloc != urlparse(url_domain).netloc:
                 continue
-            print("ok")
             hrefs.append(a["href"])
         hrefs = set(hrefs[:article_number])
 

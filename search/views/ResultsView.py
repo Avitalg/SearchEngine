@@ -42,8 +42,6 @@ class ResultsView(generic.ListView):
     def or_statement(wordlist, not_stat=False, sound=False):
         wordlist = [word for word in wordlist if word]
         exclude_words = list()
-        print("not stat", not_stat)
-        print(wordlist)
         if not not_stat:
             exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([str(s).strip('"') for s in wordlist])
@@ -59,8 +57,6 @@ class ResultsView(generic.ListView):
                 for content in contain:
                     words_contain += Word.objects.filter(data__contains=content).exclude(data__in=exclude_words). \
                         values_list('article', flat=True)
-                    print("try")
-                print("&:", words_contain)
             words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount'). \
                 values_list('article', flat=True)
 
@@ -138,8 +134,6 @@ class ResultsView(generic.ListView):
     def excluded_words(wordlist):
         exclude_words = Stoplist.objects.values_list("data", flat=True)
         cancel_stoplist = (['"' + word + '"' for word in exclude_words])
-        print("cancel: {0}, words: {1}".format(cancel_stoplist, wordlist))
         exclude_words = set(cancel_stoplist) - set(wordlist)
-        # print("www", exclude_words)
         exclude_words = ([word[1:len(word) - 1] for word in exclude_words])
         return exclude_words
