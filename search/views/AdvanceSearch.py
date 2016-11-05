@@ -13,6 +13,8 @@ class AdvanceSearch(TemplateView):
     def post(self, request):
         data = str(request.POST.get('find', ""))
         first_start, second_start, second_end = -1, -1, -1
+        sound = request.POST.get('sound', 'no')
+        sound = False if sound == 'no' else True
         results = []
         wordlist = []
         error = ""
@@ -35,7 +37,8 @@ class AdvanceSearch(TemplateView):
                 elif first_start == -1:
                     error = "Error. No opening bracket for )."
                 else:
-                    articles, words = self.parse_brackets(data[first_start+1:place],first_start, second_start, second_end)
+                    articles, words = self.parse_brackets(data[first_start+1:place],sound, first_start, second_start,
+                                                          second_end)
                     wordlist = set(list(wordlist) + list(words))
                     if first_result_flag:
                         results = articles
@@ -53,7 +56,7 @@ class AdvanceSearch(TemplateView):
                 if second_start == -1:
                     error = "No opening bracket for ]."
                 second_end = place
-                articles, words = self.parse_brackets(data[second_start:place], first_start, second_start)
+                articles, words = self.parse_brackets(data[second_start:place], sound, first_start, second_start)
                 if first_result_flag:
                     results = articles
                     first_result_flag = False
@@ -64,12 +67,12 @@ class AdvanceSearch(TemplateView):
                 self.second_not_flag = False
 
         if first_result_flag:
-            results, words = self.parse_brackets(data, 0)
+            results, words = self.parse_brackets(data, sound, 0)
             wordlist = set(list(wordlist) + list(words))
         wordlist = list(wordlist)
         return render(request, 'search/results.html', {"results": results, "error": error, "keywords": wordlist,
                                                        "searcher": ResultsView.searches,
-                                                       "search": ResultsView.searches[len(ResultsView.searches)-1]})
+                                                       "search": data})
 
     def clean_string(str):
         str = str.replace("^", "")
@@ -79,7 +82,7 @@ class AdvanceSearch(TemplateView):
         str = str.replace(")", "")
         return str
 
-    def parse_brackets(self, data, first_start, second_start=-1, second_end=-1):
+    def parse_brackets(self, data, sound, first_start, second_start=-1, second_end=-1):
 
         if second_end > -1:
             data = data[:second_start] + data[second_end + 1:]
@@ -88,39 +91,39 @@ class AdvanceSearch(TemplateView):
         words = re.split("&&|&|\|\|", data)
 
         if data.find("&&") > -1:
-            article = self.get_and_articles(words, first_start, second_start)
+            article = self.get_and_articles(words,sound, first_start, second_start)
         elif data.find("&") > -1:
-            return self.get_easy_and_articles(words, first_start, second_start)
+            return self.get_easy_and_articles(words, sound, first_start, second_start)
         else:
-            article = self.get_or_articles(words, first_start, second_start)
+            article = self.get_or_articles(words, sound, first_start, second_start)
         return article
 
-    def get_and_articles(self, wordlist, first_start, second_start):
+    def get_and_articles(self, wordlist, sound, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
-            return ResultsView.not_statement(wordlist, "and"), wordlist
+            return ResultsView.not_statement(wordlist, "and", sound), wordlist
 
-        return ResultsView.and_statement(wordlist), wordlist
+        return ResultsView.and_statement(wordlist, False, sound), wordlist
 
-    def get_easy_and_articles(self, wordlist, first_start, second_start):
+    def get_easy_and_articles(self, wordlist, sound, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
-            return ResultsView.not_statement(wordlist, "easy-and"), wordlist
+            return ResultsView.not_statement(wordlist, "easy-and", sound), wordlist
 
-        return ResultsView.easy_and_statement(wordlist), wordlist
+        return ResultsView.easy_and_statement(wordlist, False, sound), wordlist
 
-    def get_or_articles(self, wordlist, first_start, second_start):
+    def get_or_articles(self, wordlist, sound, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
-            return ResultsView.not_statement(wordlist, "or"), wordlist
+            return ResultsView.not_statement(wordlist, "or", sound), wordlist
 
-        articles = ResultsView.or_statement(wordlist), wordlist
+        articles = ResultsView.or_statement(wordlist, False, sound), wordlist
         return articles
 
     def find_operator(self, data, start, end):

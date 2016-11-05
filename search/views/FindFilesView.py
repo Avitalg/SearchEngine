@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 from search.models import Article, Word, Postingfile as Pfile
 from django.views import generic
 import os
+from soundex import getInstance
+
 # coding: utf-8
 
 
@@ -117,6 +119,8 @@ class FindFilesView(generic.ListView):
                 new_word.article = article
                 new_word.data = word
                 new_word.amount = 1
+                soundex = getInstance().soundex(word)
+                new_word.soundex = soundex
                 new_word.save()
             finally:
                 try:
