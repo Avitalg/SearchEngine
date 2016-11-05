@@ -12,17 +12,15 @@ class ResultsView(generic.ListView):
     searches = []
 
     def post(self, request):
-        data = str(request.POST.get('find', ""))
+        data = str(request.POST.get('find', ''))
         smeth = request.POST.get('smeth', "or")
         sound = request.POST.get('sound', 'no')
         sound = False if sound == 'no' else True
         ResultsView.searches.insert(0, data)
         data = data.lower()
         exclude_words = Stoplist.objects.values_list("data", flat=True)
-        wordlist = re.findall(r"[\w']+", data)
+        wordlist = re.findall(r"\"*[\w']+\"*", data)
         jsonword = list(set(wordlist)-set(exclude_words))
-
-        print(dictionary.getSynonyms())
         if smeth == 'or':
             articles = ResultsView.or_statement(wordlist, False, sound)
 
@@ -44,11 +42,12 @@ class ResultsView(generic.ListView):
     def or_statement(wordlist, not_stat=False, sound=False):
         wordlist = [word for word in wordlist if word]
         exclude_words = list()
-
+        print("not stat", not_stat)
+        print(wordlist)
         if not not_stat:
             exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([str(s).strip('"') for s in wordlist])
-
+        print(exclude_words)
         if sound:
             wordlist = [getInstance().soundex(word) for word in wordlist if word]
             words = Word.objects.filter(soundex__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
@@ -131,6 +130,8 @@ class ResultsView(generic.ListView):
     def excluded_words(wordlist):
         exclude_words = Stoplist.objects.values_list("data", flat=True)
         cancel_stoplist = (['"' + word + '"' for word in exclude_words])
+        print("cancel: {0}, words: {1}".format(cancel_stoplist, wordlist))
         exclude_words = set(cancel_stoplist) - set(wordlist)
+        # print("www", exclude_words)
         exclude_words = ([word[1:len(word) - 1] for word in exclude_words])
         return exclude_words

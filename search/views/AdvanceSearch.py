@@ -37,7 +37,7 @@ class AdvanceSearch(TemplateView):
                 elif first_start == -1:
                     error = "Error. No opening bracket for )."
                 else:
-                    articles, words = self.parse_brackets(data[first_start+1:place],sound, first_start, second_start,
+                    articles, words = self.parse_brackets(data[first_start+1:place], sound, first_start, second_start,
                                                           second_end)
                     wordlist = set(list(wordlist) + list(words))
                     if first_result_flag:
@@ -91,7 +91,7 @@ class AdvanceSearch(TemplateView):
         words = re.split("&&|&|\|\|", data)
 
         if data.find("&&") > -1:
-            article = self.get_and_articles(words,sound, first_start, second_start)
+            article = self.get_and_articles(words, sound, first_start, second_start)
         elif data.find("&") > -1:
             return self.get_easy_and_articles(words, sound, first_start, second_start)
         else:
