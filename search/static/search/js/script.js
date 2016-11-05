@@ -5,7 +5,7 @@ if(window.$){
 
         if(!!window.words){
             $("#inputText").mark(words,
-            {"accuracy":"exactly",
+            {"accuracy":"partially",
             "limiters": [",", "."]});
         }
 

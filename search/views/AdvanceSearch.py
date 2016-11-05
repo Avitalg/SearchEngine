@@ -69,7 +69,10 @@ class AdvanceSearch(TemplateView):
         if first_result_flag:
             results, words = self.parse_brackets(data, sound, 0)
             wordlist = set(list(wordlist) + list(words))
-        wordlist = list(wordlist)
+
+        words = [word[:len(word)-1] for word in wordlist if word[len(word)-1] == "*"]
+        wordlist = list(wordlist) + words
+
         return render(request, 'search/results.html', {"results": results, "error": error, "keywords": wordlist,
                                                        "searcher": ResultsView.searches,
                                                        "search": data})
@@ -91,16 +94,16 @@ class AdvanceSearch(TemplateView):
         words = re.split("&&|&|\|\|", data)
 
         if data.find("&&") > -1:
-            article = self.get_and_articles(words, sound, first_start, second_start)
+            return self.get_and_articles(words, sound, first_start, second_start)
         elif data.find("&") > -1:
             return self.get_easy_and_articles(words, sound, first_start, second_start)
         else:
-            article = self.get_or_articles(words, sound, first_start, second_start)
-        return article
+            return self.get_or_articles(words, sound, first_start, second_start)
 
     def get_and_articles(self, wordlist, sound, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
+        print("words:", wordlist)
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
             return ResultsView.not_statement(wordlist, "and", sound), wordlist
@@ -119,12 +122,13 @@ class AdvanceSearch(TemplateView):
     def get_or_articles(self, wordlist, sound, first_start, second_start):
         # delete empty strings
         wordlist = [word for word in wordlist if word]
+        print("words:", wordlist)
+
         if (second_start > -1 and self.second_not_flag) or \
                 (first_start > -1 and self.first_not_flag):
             return ResultsView.not_statement(wordlist, "or", sound), wordlist
-
-        articles = ResultsView.or_statement(wordlist, False, sound), wordlist
-        return articles
+        print("x", wordlist)
+        return ResultsView.or_statement(wordlist, False, sound), wordlist
 
     def find_operator(self, data, start, end):
         if data[start-1] == '^':

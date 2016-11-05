@@ -47,15 +47,24 @@ class ResultsView(generic.ListView):
         if not not_stat:
             exclude_words = ResultsView.excluded_words(wordlist)
         wordlist = ([str(s).strip('"') for s in wordlist])
-        print(exclude_words)
+        contain = [word[:len(word)-1] for word in wordlist if word[len(word)-1] == "*"]
+        words_contain = list()
+
         if sound:
             wordlist = [getInstance().soundex(word) for word in wordlist if word]
-            words = Word.objects.filter(soundex__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
-                values("article")
+            words = Word.objects.filter(soundex__in=wordlist).exclude(data__in=exclude_words).order_by('-amount'). \
+                values_list('article', flat=True)
         else:
-            words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
-                values("article")
+            if len(contain) > 0:
+                for content in contain:
+                    words_contain += Word.objects.filter(data__contains=content).exclude(data__in=exclude_words). \
+                        values_list('article', flat=True)
+                    print("try")
+                print("&:", words_contain)
+            words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount'). \
+                values_list('article', flat=True)
 
+        words = list(words) + list(words_contain)
         articles = Article.objects.filter(id__in=words).exclude(hide=True)
         return articles
 
@@ -70,7 +79,7 @@ class ResultsView(generic.ListView):
 
         if sound:
             wordlist = [getInstance().soundex(word) for word in wordlist if word]
-            words =  Word.objects.filter(soundex__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
+            words = Word.objects.filter(soundex__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
             values_list('article', flat=True)
         else:
             words = Word.objects.filter(data__in=wordlist).exclude(data__in=exclude_words).order_by('-amount').\
@@ -125,7 +134,6 @@ class ResultsView(generic.ListView):
             articles = ResultsView.easy_and_statement(wordlist, True, sound)
         articles = Article.objects.exclude(id__in=articles)
         return articles
-
 
     def excluded_words(wordlist):
         exclude_words = Stoplist.objects.values_list("data", flat=True)

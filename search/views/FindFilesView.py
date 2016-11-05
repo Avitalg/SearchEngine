@@ -8,6 +8,7 @@ from search.models import Article, Word, Postingfile as Pfile
 from django.views import generic
 import os
 from soundex import getInstance
+from PyDictionary import PyDictionary
 
 # coding: utf-8
 
@@ -52,7 +53,6 @@ class FindFilesView(generic.ListView):
                 else:
                     a["href"] = url_domain + a["href"]
             if urlparse(a["href"]).netloc != urlparse(url_domain).netloc:
-                print("continue")
                 continue
             print("ok")
             hrefs.append(a["href"])

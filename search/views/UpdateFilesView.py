@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from .FindFilesView import FindFilesView
+import os
 
 
 class UpdateFilesView(generic.ListView):
@@ -34,14 +35,34 @@ class UpdateFilesView(generic.ListView):
     def get_new_article_data(link):
         r = requests.get(link)
         if r.status_code == 200:
-            html_content = r.text
+            html_content = r.content
             soup = BeautifulSoup(html_content)
+            # clear script and style elements
+            for script in soup(["script", "style"]):
+                script.extract()
+
             title = soup.title.string
             text = soup.body.get_text()
+            filename = 'media/' + title + '.txt'
+            file = open(filename, 'w')
+            file.write(text)
+            file.close()
+
+            file = open(filename, 'r')
+            text = file.read()
+            # break into lines and remove leading and trailing space on each
+            lines = (line.strip() for line in text.splitlines())
+            # break multi-headlines into a line each
+            chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+            # drop blank lines
+            text = '\n'.join(chunk for chunk in chunks if chunk)
+
             regex = re.compile(r'[\n\r\t]')
             text = text.rstrip()
             text = regex.sub(' ', text)
             summary = text[:300]
+            file.close()
+            os.remove(filename)
             return {"title": title, "summary": summary, "text": text}
         else:
             Article.objects.filter(url=link).delete()
